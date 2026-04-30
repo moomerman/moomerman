@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karl2D — API Cheatsheet</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          teal:    '#6eb8a8',
+          dteal:   '#2a584f',
+          green:   '#74a33f',
+          cream:   '#fcffc0',
+          red:     '#c6505a',
+          plum:    '#2f142f',
+          mauve:   '#774448',
+          orange:  '#ee9c5d',
+        },
+        fontFamily: {
+          mono: ['ui-monospace','SFMono-Regular','Menlo','Consolas','monospace'],
+          sans: ['ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { background: #2f142f; }
+  .sig { white-space: pre-wrap; word-break: break-word; color: #dde0b8; padding: 2px 6px; border-radius: 3px; margin: 0 -6px; }
+  .sig .param { color: #6eb8a8; }
+  .sig .ret   { color: #c6505a; }
+  .sig .kw    { color: #fcffc0; font-weight: 700; }
+  .sig .punct { color: #b07a7e; }
+  .sig:nth-child(odd) { background: rgba(255,255,255,0.025); }
+  .section-heading {
+    color: #ee9c5d;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(238,156,93,0.35);
+    margin-bottom: 8px;
+  }
+  .subheading {
+    color: #6eb8a8;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 10px;
+    margin-bottom: 2px;
+  }
+  .subheading:first-child { margin-top: 0; }
+  .pill {
+    display: inline-block;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(110,184,168,0.12);
+    color: #6eb8a8;
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    vertical-align: middle;
+  }
+  section { scroll-margin-top: 80px; }
+  .group-card { break-inside: avoid; }
+</style>
+</head>
+<body class="text-cream font-sans antialiased min-h-screen">
+
+<header class="border-b-2 border-mauve sticky top-0 z-50 bg-plum/95 backdrop-blur">
+  <div class="px-6 py-4">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight">
+          <span class="text-orange">Karl2D</span> <span class="text-teal">API Cheatsheet</span>
+        </h1>
+        <p class="mt-1 text-teal text-xs">Every public procedure, grouped by category. Generated from <code class="text-cream">karl2d.doc.odin</code>.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 text-xs font-mono">
+        <a href="#setup" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">setup</a>
+        <a href="#input" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">input</a>
+        <a href="#drawing" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">drawing</a>
+        <a href="#textures" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">textures</a>
+        <a href="#audio" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">audio</a>
+        <a href="#rendertex" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">render textures</a>
+        <a href="#math" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">math</a>
+        <a href="#fonts" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">fonts</a>
+        <a href="#shaders" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">shaders</a>
+        <a href="#camera" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">camera</a>
+        <a href="#misc" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">misc</a>
+        <a href="#ui" class="px-3 py-1 rounded-full bg-mauve/40 text-cream hover:bg-orange hover:text-plum">ui</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="mx-auto px-6 py-8">
+<div class="flex flex-col md:flex-row gap-6 items-start">
+<div class="flex-1 min-w-0">
+
+<!-- SETUP -->
+<section id="setup" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">setup</h2>
+    <div class="subheading">lifecycle</div>
+    <div class="sig"><span class="kw">init</span><span class="punct">(</span><span class="param">screen_width</span>, <span class="param">screen_height</span>: int, <span class="param">window_title</span>: string, <span class="param">options</span> := Init_Options{}<span class="punct">)</span> <span class="ret">-&gt; ^State</span></div>
+    <div class="sig"><span class="kw">update</span><span class="punct">()</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">close_window_requested</span><span class="punct">()</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">shutdown</span><span class="punct">()</span></div>
+    <div class="subheading">frame</div>
+    <div class="sig"><span class="kw">clear</span><span class="punct">(</span><span class="param">color</span>: Color<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">present</span><span class="punct">()</span></div>
+    <div class="sig"><span class="kw">process_events</span><span class="punct">()</span></div>
+    <div class="sig"><span class="kw">get_events</span><span class="punct">()</span> <span class="ret">-&gt; []Event</span></div>
+    <div class="sig"><span class="kw">reset_frame_allocator</span><span class="punct">()</span></div>
+    <div class="sig"><span class="kw">calculate_frame_time</span><span class="punct">()</span></div>
+    <div class="sig"><span class="kw">get_frame_time</span><span class="punct">()</span> <span class="ret">-&gt; f32</span></div>
+    <div class="sig"><span class="kw">get_time</span><span class="punct">()</span> <span class="ret">-&gt; f64</span></div>
+    <div class="sig"><span class="kw">draw_current_batch</span><span class="punct">()</span></div>
+    <div class="subheading">screen</div>
+    <div class="sig"><span class="kw">set_screen_size</span><span class="punct">(</span><span class="param">width</span>, <span class="param">height</span>: int<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">get_screen_width</span><span class="punct">()</span> <span class="ret">-&gt; int</span></div>
+    <div class="sig"><span class="kw">get_screen_height</span><span class="punct">()</span> <span class="ret">-&gt; int</span></div>
+    <div class="sig"><span class="kw">get_screen_size</span><span class="punct">()</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="subheading">window</div>
+    <div class="sig"><span class="kw">set_window_position</span><span class="punct">(</span><span class="param">x</span>, <span class="param">y</span>: int<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">get_window_scale</span><span class="punct">()</span> <span class="ret">-&gt; f32</span></div>
+    <div class="sig"><span class="kw">set_window_mode</span><span class="punct">(</span><span class="param">window_mode</span>: Window_Mode<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_cursor_visible</span><span class="punct">(</span><span class="param">visible</span>: bool<span class="punct">)</span></div>
+  </div>
+</section>
+
+<!-- INPUT -->
+<section id="input" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">input</h2>
+    <div class="subheading">keyboard</div>
+    <div class="sig"><span class="kw">key_went_down</span><span class="punct">(</span><span class="param">key</span>: Keyboard_Key<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">key_went_up</span><span class="punct">(</span><span class="param">key</span>: Keyboard_Key<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">key_is_held</span><span class="punct">(</span><span class="param">key</span>: Keyboard_Key<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">get_held_modifiers</span><span class="punct">()</span> <span class="ret">-&gt; bit_set[Modifier]</span></div>
+    <div class="subheading">mouse</div>
+    <div class="sig"><span class="kw">mouse_button_went_down</span><span class="punct">(</span><span class="param">button</span>: Mouse_Button<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">mouse_button_went_up</span><span class="punct">(</span><span class="param">button</span>: Mouse_Button<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">mouse_button_is_held</span><span class="punct">(</span><span class="param">button</span>: Mouse_Button<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">get_mouse_wheel_delta</span><span class="punct">()</span> <span class="ret">-&gt; f32</span></div>
+    <div class="sig"><span class="kw">get_mouse_position</span><span class="punct">()</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">get_mouse_delta</span><span class="punct">()</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="subheading">gamepad</div>
+    <div class="sig"><span class="kw">is_gamepad_active</span><span class="punct">(</span><span class="param">gamepad</span>: Gamepad_Index<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">gamepad_button_went_down</span><span class="punct">(</span><span class="param">gamepad</span>: Gamepad_Index, <span class="param">button</span>: Gamepad_Button<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">gamepad_button_went_up</span><span class="punct">(</span><span class="param">gamepad</span>: Gamepad_Index, <span class="param">button</span>: Gamepad_Button<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">gamepad_button_is_held</span><span class="punct">(</span><span class="param">gamepad</span>: Gamepad_Index, <span class="param">button</span>: Gamepad_Button<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">get_gamepad_axis</span><span class="punct">(</span><span class="param">gamepad</span>: Gamepad_Index, <span class="param">axis</span>: Gamepad_Axis<span class="punct">)</span> <span class="ret">-&gt; f32</span></div>
+    <div class="sig"><span class="kw">set_gamepad_vibration</span><span class="punct">(</span><span class="param">gamepad</span>: Gamepad_Index, <span class="param">left</span>, <span class="param">right</span>: f32<span class="punct">)</span></div>
+  </div>
+</section>
+
+<!-- DRAWING -->
+<section id="drawing" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">drawing</h2>
+    <div class="sig"><span class="kw">draw_rect</span><span class="punct">(</span><span class="param">rect</span>: Rect, <span class="param">color</span>: Color, <span class="param">origin</span> := {}, <span class="param">rotation</span>: f32 = 0<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_rect_vec</span><span class="punct">(</span><span class="param">position</span>, <span class="param">size</span>: Vec2, <span class="param">color</span>: Color, <span class="param">origin</span> := {}, <span class="param">rotation</span>: f32 = 0<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_rect_outline</span><span class="punct">(</span><span class="param">r</span>: Rect, <span class="param">thickness</span>: f32, <span class="param">color</span>: Color<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_circle</span><span class="punct">(</span><span class="param">center</span>: Vec2, <span class="param">radius</span>: f32, <span class="param">color</span>: Color, <span class="param">segments</span> := 16<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_circle_outline</span><span class="punct">(</span><span class="param">center</span>: Vec2, <span class="param">radius</span>, <span class="param">thickness</span>: f32, <span class="param">color</span>: Color, <span class="param">segments</span> := 16<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_line</span><span class="punct">(</span><span class="param">start</span>, <span class="param">end</span>: Vec2, <span class="param">thickness</span>: f32, <span class="param">color</span>: Color<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_triangle</span><span class="punct">(</span><span class="param">vertices</span>: [3]Vec2, <span class="param">c</span>: Color<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_texture</span><span class="punct">(</span><span class="param">texture</span>: Texture, <span class="param">position</span>: Vec2, <span class="param">origin</span> := {}, <span class="param">rotation</span>: f32 = 0, <span class="param">tint</span> := WHITE<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_texture_rect</span><span class="punct">(</span><span class="param">texture</span>: Texture, <span class="param">source</span>: Rect, <span class="param">position</span>: Vec2, <span class="param">origin</span> := {}, <span class="param">rotation</span>: f32 = 0, <span class="param">tint</span> := WHITE<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">draw_texture_fit</span><span class="punct">(</span><span class="param">texture</span>: Texture, <span class="param">source</span>, <span class="param">dest</span>: Rect, <span class="param">origin</span> := {}, <span class="param">rotation</span>: f32 = 0, <span class="param">tint</span> := WHITE<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">measure_text</span><span class="punct">(</span><span class="param">text</span>: string, <span class="param">font_size</span>: f32, <span class="param">font</span> := FONT_DEFAULT<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">draw_text</span><span class="punct">(</span><span class="param">text</span>: string, <span class="param">position</span>: Vec2, <span class="param">font_size</span>: f32, <span class="param">color</span>: Color, <span class="param">font</span> := FONT_DEFAULT, <span class="param">origin</span> := {}, <span class="param">rotation</span>: f32 = 0<span class="punct">)</span></div>
+  </div>
+</section>
+
+<!-- TEXTURES -->
+<section id="textures" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">textures</h2>
+    <div class="sig"><span class="kw">create_texture</span><span class="punct">(</span><span class="param">width</span>, <span class="param">height</span>: int, <span class="param">format</span>: Pixel_Format<span class="punct">)</span> <span class="ret">-&gt; Texture</span></div>
+    <div class="sig"><span class="kw">load_texture_from_file</span><span class="punct">(</span><span class="param">filename</span>: string, <span class="param">options</span>: Load_Texture_Options = {}<span class="punct">)</span> <span class="ret">-&gt; Texture</span></div>
+    <div class="sig"><span class="kw">load_texture_from_bytes</span><span class="punct">(</span><span class="param">bytes</span>: []u8, <span class="param">options</span>: Load_Texture_Options = {}<span class="punct">)</span> <span class="ret">-&gt; Texture</span></div>
+    <div class="sig"><span class="kw">load_texture_from_bytes_raw</span><span class="punct">(</span><span class="param">bytes</span>: []u8, <span class="param">width</span>, <span class="param">height</span>: int, <span class="param">format</span>: Pixel_Format<span class="punct">)</span> <span class="ret">-&gt; Texture</span></div>
+    <div class="sig"><span class="kw">get_texture_rect</span><span class="punct">(</span><span class="param">t</span>: Texture<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">update_texture</span><span class="punct">(</span><span class="param">tex</span>: Texture, <span class="param">bytes</span>: []u8, <span class="param">rect</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">destroy_texture</span><span class="punct">(</span><span class="param">tex</span>: Texture<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_texture_filter</span><span class="punct">(</span><span class="param">t</span>: Texture, <span class="param">filter</span>: Texture_Filter<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_texture_filter_ex</span><span class="punct">(</span><span class="param">t</span>: Texture, <span class="param">scale_down_filter</span>, <span class="param">scale_up_filter</span>, <span class="param">mip_filter</span>: Texture_Filter<span class="punct">)</span></div>
+  </div>
+</section>
+
+<!-- RENDER TEXTURES -->
+<section id="rendertex" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">render textures</h2>
+    <div class="sig"><span class="kw">create_render_texture</span><span class="punct">(</span><span class="param">width</span>, <span class="param">height</span>: int<span class="punct">)</span> <span class="ret">-&gt; Render_Texture</span></div>
+    <div class="sig"><span class="kw">destroy_render_texture</span><span class="punct">(</span><span class="param">render_texture</span>: Render_Texture<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_render_texture</span><span class="punct">(</span><span class="param">render_texture</span>: Maybe(Render_Texture)<span class="punct">)</span></div>
+  </div>
+</section>
+
+</div>
+<div class="flex-1 min-w-0">
+
+<!-- AUDIO -->
+<section id="audio" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">audio</h2>
+    <div class="subheading">sounds</div>
+    <div class="sig"><span class="kw">play_sound</span><span class="punct">(</span><span class="param">sound</span>: Sound<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">stop_sound</span><span class="punct">(</span><span class="param">sound</span>: Sound<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">sound_is_playing</span><span class="punct">(</span><span class="param">sound</span>: Sound<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">set_sound_volume</span><span class="punct">(</span><span class="param">sound</span>: Sound, <span class="param">volume</span>: f32<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_sound_pan</span><span class="punct">(</span><span class="param">sound</span>: Sound, <span class="param">pan</span>: f32<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_sound_pitch</span><span class="punct">(</span><span class="param">sound</span>: Sound, <span class="param">pitch</span>: f32<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_sound_loop</span><span class="punct">(</span><span class="param">sound</span>: Sound, <span class="param">loop</span>: bool<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">load_sound_from_file</span><span class="punct">(</span><span class="param">filename</span>: string<span class="punct">)</span> <span class="ret">-&gt; Sound</span></div>
+    <div class="sig"><span class="kw">load_sound_from_bytes</span><span class="punct">(</span><span class="param">bytes</span>: []byte<span class="punct">)</span> <span class="ret">-&gt; Sound</span></div>
+    <div class="sig"><span class="kw">load_sound_from_bytes_raw</span><span class="punct">(</span><span class="param">bytes</span>: []u8, <span class="param">format</span>: Raw_Sound_Format, <span class="param">sample_rate</span>: int, <span class="param">channels</span>: Audio_Channels<span class="punct">)</span> <span class="ret">-&gt; Sound</span></div>
+    <div class="sig"><span class="kw">create_sound_from_audio_buffer</span><span class="punct">(</span><span class="param">buffer</span>: Audio_Buffer<span class="punct">)</span> <span class="ret">-&gt; Sound</span></div>
+    <div class="sig"><span class="kw">destroy_sound</span><span class="punct">(</span><span class="param">sound</span>: Sound<span class="punct">)</span></div>
+    <div class="subheading">audio buffers</div>
+    <div class="sig"><span class="kw">load_audio_buffer_from_file</span><span class="punct">(</span><span class="param">filename</span>: string<span class="punct">)</span> <span class="ret">-&gt; Audio_Buffer</span></div>
+    <div class="sig"><span class="kw">load_audio_buffer_from_bytes</span><span class="punct">(</span><span class="param">bytes</span>: []u8<span class="punct">)</span> <span class="ret">-&gt; Audio_Buffer</span></div>
+    <div class="sig"><span class="kw">load_audio_buffer_from_bytes_raw</span><span class="punct">(</span><span class="param">bytes</span>: []u8, <span class="param">format</span>: Raw_Sound_Format, <span class="param">sample_rate</span>: int, <span class="param">channels</span>: Audio_Channels<span class="punct">)</span> <span class="ret">-&gt; Audio_Buffer</span></div>
+    <div class="sig"><span class="kw">destroy_audio_buffer</span><span class="punct">(</span><span class="param">audio_buffer</span>: Audio_Buffer<span class="punct">)</span></div>
+    <div class="subheading">streams</div>
+    <div class="sig"><span class="kw">load_audio_stream_from_file</span><span class="punct">(</span><span class="param">filename</span>: string<span class="punct">)</span> <span class="ret">-&gt; Audio_Stream</span></div>
+    <div class="sig"><span class="kw">load_audio_stream_from_bytes</span><span class="punct">(</span><span class="param">bytes</span>: []u8<span class="punct">)</span> <span class="ret">-&gt; Audio_Stream</span></div>
+    <div class="sig"><span class="kw">destroy_audio_stream</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">update_audio_stream</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">play_audio_stream</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">pause_audio_stream</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">stop_audio_stream</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_audio_stream_volume</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream, <span class="param">volume</span>: f32<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_audio_stream_pan</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream, <span class="param">pan</span>: f32<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_audio_stream_pitch</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream, <span class="param">pitch</span>: f32<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_audio_stream_loop</span><span class="punct">(</span><span class="param">stream</span>: Audio_Stream, <span class="param">loop</span>: bool<span class="punct">)</span></div>
+    <div class="subheading">mixer</div>
+    <div class="sig"><span class="kw">update_audio_mixer</span><span class="punct">()</span></div>
+  </div>
+</section>
+
+<!-- MATH -->
+<section id="math" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">math</h2>
+    <div class="subheading">overlap tests</div>
+    <div class="sig"><span class="kw">rect_overlapping</span><span class="punct">(</span><span class="param">a</span>, <span class="param">b</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="sig"><span class="kw">rect_overlap</span><span class="punct">(</span><span class="param">a</span>, <span class="param">b</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; (Rect, bool)</span></div>
+    <div class="sig"><span class="kw">point_in_rect</span><span class="punct">(</span><span class="param">point</span>: Vec2, <span class="param">rect</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+    <div class="subheading">rect corners &amp; midpoints</div>
+    <div class="sig"><span class="kw">rect_middle</span><span class="punct">(</span><span class="param">r</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; Vec2</span><span class="pill">alias: rect_center</span></div>
+    <div class="sig"><span class="kw">rect_from_pos_size</span><span class="punct">(</span><span class="param">pos</span>, <span class="param">size</span>: Vec2<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">rect_top_left</span><span class="punct">(</span><span class="param">r</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">rect_top_middle</span><span class="punct">(</span><span class="param">r</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">rect_top_right</span><span class="punct">(</span><span class="param">r</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">rect_bottom_left</span><span class="punct">(</span><span class="param">r</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">rect_bottom_middle</span><span class="punct">(</span><span class="param">r</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">rect_bottom_right</span><span class="punct">(</span><span class="param">r</span>: Rect<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="subheading">rect transforms</div>
+    <div class="sig"><span class="kw">rect_shrink</span><span class="punct">(</span><span class="param">r</span>: Rect, <span class="param">x</span>, <span class="param">y</span>: f32<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">rect_expand</span><span class="punct">(</span><span class="param">r</span>: Rect, <span class="param">x</span>, <span class="param">y</span>: f32<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">rect_cut_top</span><span class="punct">(</span><span class="param">r</span>: ^Rect, <span class="param">h</span>, <span class="param">m</span>: f32<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">rect_cut_bottom</span><span class="punct">(</span><span class="param">r</span>: ^Rect, <span class="param">h</span>, <span class="param">m</span>: f32<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">rect_cut_left</span><span class="punct">(</span><span class="param">r</span>: ^Rect, <span class="param">w</span>, <span class="param">m</span>: f32<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">rect_cut_right</span><span class="punct">(</span><span class="param">r</span>: ^Rect, <span class="param">w</span>, <span class="param">m</span>: f32<span class="punct">)</span> <span class="ret">-&gt; Rect</span></div>
+    <div class="sig"><span class="kw">rotate</span><span class="punct">(</span><span class="param">v</span>: Vec2, <span class="param">angle_radians</span>: f32<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+  </div>
+</section>
+
+<!-- FONTS -->
+<section id="fonts" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">fonts</h2>
+    <div class="sig"><span class="kw">load_font_from_file</span><span class="punct">(</span><span class="param">filename</span>: string, <span class="param">options</span>: Font_Options = {}<span class="punct">)</span> <span class="ret">-&gt; Font</span></div>
+    <div class="sig"><span class="kw">load_font_from_bytes</span><span class="punct">(</span><span class="param">data</span>: []u8, <span class="param">options</span>: Font_Options = {}<span class="punct">)</span> <span class="ret">-&gt; Font</span></div>
+    <div class="sig"><span class="kw">destroy_font</span><span class="punct">(</span><span class="param">font</span>: Font<span class="punct">)</span></div>
+  </div>
+</section>
+
+<!-- SHADERS -->
+<section id="shaders" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">shaders</h2>
+    <div class="sig"><span class="kw">load_shader_from_file</span><span class="punct">(</span><span class="param">vertex_filename</span>, <span class="param">fragment_filename</span>: string, <span class="param">layout_formats</span>: []Pixel_Format = {}<span class="punct">)</span> <span class="ret">-&gt; Shader</span></div>
+    <div class="sig"><span class="kw">load_shader_from_bytes</span><span class="punct">(</span><span class="param">vertex_shader_bytes</span>, <span class="param">fragment_shader_bytes</span>: []byte, <span class="param">layout_formats</span>: []Pixel_Format = {}<span class="punct">)</span> <span class="ret">-&gt; Shader</span></div>
+    <div class="sig"><span class="kw">destroy_shader</span><span class="punct">(</span><span class="param">shader</span>: Shader<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">get_default_shader</span><span class="punct">()</span> <span class="ret">-&gt; Shader</span></div>
+    <div class="sig"><span class="kw">set_shader</span><span class="punct">(</span><span class="param">shader</span>: Maybe(Shader)<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_shader_constant</span><span class="punct">(</span><span class="param">shd</span>: Shader, <span class="param">loc</span>: Shader_Constant_Location, <span class="param">val</span>: any<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">override_shader_input</span><span class="punct">(</span><span class="param">shader</span>: Shader, <span class="param">input</span>: int, <span class="param">val</span>: any<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">pixel_format_size</span><span class="punct">(</span><span class="param">f</span>: Pixel_Format<span class="punct">)</span> <span class="ret">-&gt; int</span></div>
+  </div>
+</section>
+
+<!-- CAMERA -->
+<section id="camera" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">camera</h2>
+    <div class="sig"><span class="kw">set_camera</span><span class="punct">(</span><span class="param">camera</span>: Maybe(Camera)<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">screen_to_world</span><span class="punct">(</span><span class="param">pos</span>: Vec2, <span class="param">camera</span>: Camera<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">world_to_screen</span><span class="punct">(</span><span class="param">pos</span>: Vec2, <span class="param">camera</span>: Camera<span class="punct">)</span> <span class="ret">-&gt; Vec2</span></div>
+    <div class="sig"><span class="kw">camera_view_matrix</span><span class="punct">(</span><span class="param">c</span>: Camera<span class="punct">)</span> <span class="ret">-&gt; Mat4</span></div>
+    <div class="sig"><span class="kw">camera_world_matrix</span><span class="punct">(</span><span class="param">c</span>: Camera<span class="punct">)</span> <span class="ret">-&gt; Mat4</span></div>
+  </div>
+</section>
+
+<!-- MISC -->
+<section id="misc" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">misc</h2>
+    <div class="sig"><span class="kw">set_blend_mode</span><span class="punct">(</span><span class="param">mode</span>: Blend_Mode<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_scissor_rect</span><span class="punct">(</span><span class="param">scissor_rect</span>: Maybe(Rect)<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">set_internal_state</span><span class="punct">(</span><span class="param">state</span>: ^State<span class="punct">)</span></div>
+    <div class="sig"><span class="kw">color_alpha</span><span class="punct">(</span><span class="param">c</span>: Color, <span class="param">a</span>: u8<span class="punct">)</span> <span class="ret">-&gt; Color</span></div>
+    <div class="sig"><span class="kw">open_url</span><span class="punct">(</span><span class="param">url</span>: string<span class="punct">)</span> <span class="ret">-&gt; Open_URL_Error</span></div>
+  </div>
+</section>
+
+<!-- UI -->
+<section id="ui" class="group-card mb-5 bg-plum/40 border border-mauve/40 rounded-lg overflow-hidden">
+  <div class="px-4 pt-3 pb-3 font-mono text-xs leading-snug space-y-0.5">
+    <h2 class="section-heading">ui</h2>
+    <div class="sig"><span class="kw">ui_button_width</span><span class="punct">(</span><span class="param">text</span>: string, <span class="param">button_height</span>: f32<span class="punct">)</span> <span class="ret">-&gt; f32</span></div>
+    <div class="sig"><span class="kw">ui_button</span><span class="punct">(</span><span class="param">r</span>: Rect, <span class="param">text</span>: string<span class="punct">)</span> <span class="ret">-&gt; bool</span></div>
+  </div>
+</section>
+
+</div>
+</div>
+</main>
+
+<footer class="border-t-2 border-mauve mt-8">
+  <div class="px-6 py-6 text-xs font-mono text-teal flex flex-wrap justify-between gap-4">
+    <span>Karl2D — generated from <code class="text-cream">karl2d.doc.odin</code></span>
+    <span>Palette: <a class="underline hover:text-orange" href="https://lospec.com/palette-list/retrocal-8" target="_blank" rel="noreferrer">retrocal-8</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
