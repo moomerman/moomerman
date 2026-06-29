@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+        />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <meta name="theme-color" content="#ff8c42" />
+        <title>Wake Up and Win</title>
+        <style>
+            :root {
+                --bg1: #ff8c42;
+                --bg2: #ffd166;
+                --ink: #2b2118;
+                --card: #fffdf7;
+                --accent: #e8590c;
+                --good: #2f9e44;
+                --pass: #495057;
+                --shadow: 0 8px 24px rgba(120, 60, 0, 0.25);
+            }
+            * {
+                box-sizing: border-box;
+                -webkit-tap-highlight-color: transparent;
+            }
+            html,
+            body {
+                margin: 0;
+                height: 100%;
+            }
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    sans-serif;
+                color: var(--ink);
+                background: linear-gradient(160deg, var(--bg1), var(--bg2));
+                background-attachment: fixed;
+                min-height: 100vh;
+                min-height: 100dvh;
+                display: flex;
+                flex-direction: column;
+                overflow-x: hidden;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            .app {
+                flex: 1;
+                width: 100%;
+                max-width: 480px;
+                margin: 0 auto;
+                padding: env(safe-area-inset-top) 18px
+                    calc(18px + env(safe-area-inset-bottom));
+                display: flex;
+                flex-direction: column;
+            }
+            .screen {
+                display: none;
+                flex: 1;
+                flex-direction: column;
+                padding-top: 14px;
+                animation: fade 0.25s ease;
+            }
+            .screen.active {
+                display: flex;
+            }
+            @keyframes fade {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+
+            h1 {
+                font-size: 2.2rem;
+                text-align: center;
+                margin: 0.2em 0 0;
+                letter-spacing: -0.5px;
+            }
+            h1 .sun {
+                display: block;
+                font-size: 2.6rem;
+                line-height: 1;
+            }
+            .tagline {
+                text-align: center;
+                margin: 4px 0 18px;
+                opacity: 0.8;
+                font-weight: 600;
+            }
+
+            .panel {
+                background: var(--card);
+                border-radius: 20px;
+                box-shadow: var(--shadow);
+                padding: 18px;
+                margin-bottom: 14px;
+            }
+            label.fieldlabel {
+                font-weight: 700;
+                font-size: 0.95rem;
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            .player-row {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 8px;
+                align-items: center;
+            }
+            .player-row input {
+                flex: 1;
+                font-size: 1.05rem;
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 2px solid #f0e6d6;
+                background: #fffef9;
+                color: var(--ink);
+            }
+            .player-row input:focus {
+                outline: none;
+                border-color: var(--accent);
+            }
+            .iconbtn {
+                border: none;
+                background: #ffe3cc;
+                color: var(--accent);
+                font-size: 1.3rem;
+                width: 46px;
+                height: 46px;
+                border-radius: 12px;
+                flex: 0 0 auto;
+                cursor: pointer;
+            }
+
+            button.big {
+                width: 100%;
+                border: none;
+                border-radius: 16px;
+                padding: 18px;
+                font-size: 1.25rem;
+                font-weight: 800;
+                cursor: pointer;
+                box-shadow: var(--shadow);
+                color: #fff;
+                background: var(--accent);
+                transition: transform 0.08s ease;
+                margin-top: 6px;
+            }
+            button.big:active {
+                transform: scale(0.97);
+            }
+            button.ghost {
+                background: rgba(255, 255, 255, 0.55);
+                color: var(--ink);
+                box-shadow: none;
+                border: 2px solid rgba(255, 255, 255, 0.7);
+            }
+            button.big.good {
+                background: var(--good);
+            }
+            button.big.pass {
+                background: var(--pass);
+            }
+            button:disabled {
+                opacity: 0.45;
+            }
+
+            .center {
+                text-align: center;
+            }
+            .turnhead {
+                text-align: center;
+                margin-bottom: 8px;
+            }
+            .turnhead .who {
+                font-size: 1.9rem;
+                font-weight: 800;
+            }
+            .turnhead .round {
+                font-weight: 700;
+                opacity: 0.75;
+            }
+
+            /* Spinner */
+            .spinwrap {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                margin: 10px 0 4px;
+            }
+            .letter {
+                width: 160px;
+                height: 160px;
+                border-radius: 50%;
+                background: radial-gradient(circle at 35% 30%, #fff, #ffe1bf);
+                box-shadow:
+                    var(--shadow),
+                    inset 0 0 0 6px #ffcf99;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 5.5rem;
+                font-weight: 900;
+                color: var(--accent);
+            }
+            .letter.spinning {
+                animation: pulse 0.12s linear infinite;
+            }
+            @keyframes pulse {
+                50% {
+                    transform: scale(1.06);
+                }
+            }
+
+            /* Timer */
+            .timer {
+                text-align: center;
+                font-size: 3.4rem;
+                font-weight: 900;
+                letter-spacing: 1px;
+                margin: 2px 0;
+            }
+            .timer.warn {
+                color: var(--accent);
+            }
+            .timerbar {
+                height: 12px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.5);
+                overflow: hidden;
+                margin-bottom: 10px;
+            }
+            .timerbar > div {
+                height: 100%;
+                width: 100%;
+                background: var(--good);
+                transition: width 1s linear;
+            }
+            .timerbar.warn > div {
+                background: var(--accent);
+            }
+
+            .promptcard {
+                background: var(--card);
+                border-radius: 20px;
+                box-shadow: var(--shadow);
+                min-height: 150px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 22px;
+                margin-bottom: 12px;
+            }
+            .promptcard .label {
+                font-weight: 700;
+                opacity: 0.6;
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+            .promptcard .text {
+                font-size: 1.7rem;
+                font-weight: 800;
+                line-height: 1.2;
+            }
+            .promptcard .startwith {
+                margin-top: 14px;
+                font-size: 1rem;
+                font-weight: 700;
+            }
+            .promptcard .startwith b {
+                color: var(--accent);
+                font-size: 1.3rem;
+            }
+
+            .scoreline {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-weight: 700;
+                margin-bottom: 10px;
+            }
+            .scoreline .pts {
+                color: var(--good);
+                font-size: 1.4rem;
+            }
+
+            .btnrow {
+                display: flex;
+                gap: 10px;
+            }
+            .btnrow button {
+                flex: 1;
+                margin-top: 0;
+            }
+
+            /* Scoreboard */
+            table.scores {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            table.scores th,
+            table.scores td {
+                padding: 10px 8px;
+                text-align: center;
+            }
+            table.scores th {
+                font-size: 0.85rem;
+                opacity: 0.7;
+            }
+            table.scores td.name {
+                text-align: left;
+                font-weight: 700;
+            }
+            table.scores tr + tr td {
+                border-top: 1px solid #f0e6d6;
+            }
+            table.scores td.total {
+                font-weight: 900;
+                color: var(--accent);
+                font-size: 1.1rem;
+            }
+
+            .result-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 0;
+                border-bottom: 1px solid #f0e6d6;
+            }
+            .result-row:last-child {
+                border-bottom: none;
+            }
+            .result-row .medal {
+                font-size: 1.8rem;
+                width: 40px;
+                text-align: center;
+            }
+            .result-row .rname {
+                flex: 1;
+                font-weight: 800;
+                font-size: 1.15rem;
+            }
+            .result-row .rscore {
+                font-weight: 900;
+                color: var(--accent);
+                font-size: 1.2rem;
+            }
+            .result-row .cardtag {
+                display: block;
+                font-size: 0.8rem;
+                font-weight: 700;
+                opacity: 0.7;
+            }
+
+            .hint {
+                text-align: center;
+                font-size: 0.85rem;
+                opacity: 0.7;
+                margin-top: 6px;
+                line-height: 1.4;
+            }
+            footer {
+                text-align: center;
+                font-size: 0.75rem;
+                opacity: 0.55;
+                padding: 8px 0 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app">
+            <!-- SETUP -->
+            <section id="setup" class="screen active">
+                <h1>
+                    <span class="sun">☀️</span>Wake Up
+                    <span style="font-size: 1.4rem">and</span> Win
+                </h1>
+                <p class="tagline">Spin a letter. Beat the clock!</p>
+                <div class="panel">
+                    <label class="fieldlabel">Who's playing?</label>
+                    <div id="playerList"></div>
+                    <button
+                        class="big ghost"
+                        id="addPlayer"
+                        style="margin-top: 4px"
+                    >
+                        ＋ Add player
+                    </button>
+                </div>
+                <button class="big" id="startGame">Start Game</button>
+                <p class="hint">
+                    Tip: open this page on your phone, then “Add to Home Screen”
+                    to play it like an app — works offline.
+                </p>
+            </section>
+
+            <!-- SPIN -->
+            <section id="spin" class="screen">
+                <div class="turnhead">
+                    <div class="round" id="spinRound"></div>
+                    <div class="who" id="spinWho"></div>
+                </div>
+                <div class="spinwrap">
+                    <div class="letter" id="letterDisc">?</div>
+                    <button class="big" id="spinBtn" style="max-width: 240px">
+                        Spin for a letter
+                    </button>
+                </div>
+                <p class="hint" id="spinHint">
+                    Tap spin to get your letter, then start the 30-second round.
+                </p>
+                <div style="flex: 1"></div>
+                <button class="big good" id="beginBtn" style="display: none">
+                    Start 30s →
+                </button>
+            </section>
+
+            <!-- PLAY -->
+            <section id="play" class="screen">
+                <div class="timer" id="timerText">30</div>
+                <div class="timerbar" id="timerBar"><div></div></div>
+                <div class="promptcard">
+                    <div class="label" id="promptCount"></div>
+                    <div class="text" id="promptText"></div>
+                    <div class="startwith">
+                        starts with <b id="playLetter">A</b>
+                    </div>
+                </div>
+                <div class="scoreline">
+                    <span id="playWho"></span>
+                    <span class="pts"><span id="liveScore">0</span> pts</span>
+                </div>
+                <div class="btnrow">
+                    <button class="big pass" id="passBtn">Pass →</button>
+                    <button class="big good" id="correctBtn">Correct ✓</button>
+                </div>
+                <p class="hint">
+                    Host reads the prompt. Answer must start with the letter.
+                    Pass to skip — no going back.
+                </p>
+            </section>
+
+            <!-- TURN SUMMARY -->
+            <section id="summary" class="screen">
+                <div class="turnhead" style="margin-top: 30px">
+                    <div class="who" id="sumWho"></div>
+                    <div class="round">Time's up!</div>
+                </div>
+                <div class="panel center">
+                    <div
+                        style="font-size: 1rem; font-weight: 700; opacity: 0.7"
+                    >
+                        Scored this turn
+                    </div>
+                    <div
+                        style="
+                            font-size: 3.4rem;
+                            font-weight: 900;
+                            color: var(--accent);
+                        "
+                        id="sumPoints"
+                    >
+                        0
+                    </div>
+                    <div
+                        id="sumDetail"
+                        style="opacity: 0.7; font-weight: 600"
+                    ></div>
+                </div>
+                <div class="panel">
+                    <table class="scores" id="liveBoard"></table>
+                </div>
+                <div style="flex: 1"></div>
+                <button class="big" id="nextTurnBtn">Next player →</button>
+            </section>
+
+            <!-- RESULTS -->
+            <section id="results" class="screen">
+                <h1 style="font-size: 1.8rem">🏆 Final Scores</h1>
+                <div class="panel" id="resultsList"></div>
+                <button class="big" id="playAgainBtn">Play Again</button>
+                <button class="big ghost" id="newPlayersBtn">
+                    New Players
+                </button>
+            </section>
+
+            <footer>Wake Up and Win · pass-the-phone party game</footer>
+        </div>
+
+        <script>
+            /* ---------- Prompt cards (family-friendly) ---------- */
+            const CARDS = [
+                [
+                    "An item of clothing",
+                    "A sportsperson",
+                    "Something you watch on TV",
+                    "A British celebrity",
+                    "Something in the kitchen",
+                    "A room in the house",
+                    "Something at the park",
+                    "A male singer",
+                    "A word ending in 'ED'",
+                    "A musical instrument",
+                ],
+                [
+                    "An animal",
+                    "A country",
+                    "A type of food",
+                    "A colour",
+                    "A boy's name",
+                    "Something you wear on your feet",
+                    "A cartoon character",
+                    "A vegetable",
+                    "A job",
+                    "A board game",
+                ],
+                [
+                    "A fruit",
+                    "A football team",
+                    "A film",
+                    "A girl's name",
+                    "Something in a classroom",
+                    "A wild animal",
+                    "A drink",
+                    "A piece of furniture",
+                    "A superhero",
+                    "A school subject",
+                ],
+                [
+                    "A breakfast food",
+                    "A city",
+                    "A pop star",
+                    "Something cold",
+                    "A flower",
+                    "A type of weather",
+                    "A pet",
+                    "A toy",
+                    "A word ending in 'ING'",
+                    "A holiday destination",
+                ],
+                [
+                    "A dessert",
+                    "A car brand",
+                    "Something in a garden",
+                    "A bird",
+                    "A famous person",
+                    "A type of dance",
+                    "A part of the body",
+                    "A bug or insect",
+                    "Something round",
+                    "A planet",
+                ],
+                [
+                    "A type of sandwich",
+                    "A sport",
+                    "A TV show",
+                    "Something you take to school",
+                    "A sea creature",
+                    "A king or queen",
+                    "A reptile",
+                    "Something sticky",
+                    "A type of shop",
+                    "A word that rhymes with 'cat'",
+                ],
+                [
+                    "A pizza topping",
+                    "A type of tree",
+                    "A villain",
+                    "Something in a bathroom",
+                    "A musical band",
+                    "A farm animal",
+                    "A book",
+                    "A type of hat",
+                    "Something noisy",
+                    "A country in Europe",
+                ],
+                [
+                    "A type of cheese",
+                    "A cartoon",
+                    "Something you find at the beach",
+                    "A historical figure",
+                    "A type of bird",
+                    "A magic word",
+                    "Something soft",
+                    "A vehicle",
+                    "A capital city",
+                    "A type of biscuit",
+                ],
+                [
+                    "A zoo animal",
+                    "A type of pasta",
+                    "An author",
+                    "Something electric",
+                    "A jungle animal",
+                    "A nickname",
+                    "Something you can throw",
+                    "A type of berry",
+                    "A famous building",
+                    "A word ending in 'LY'",
+                ],
+                [
+                    "A type of soup",
+                    "A YouTuber or streamer",
+                    "Something you find in space",
+                    "A type of shoe",
+                    "A spice or herb",
+                    "A dog breed",
+                    "Something purple",
+                    "A festival or holiday",
+                    "A type of bridge",
+                    "A word starting and ending with the same letter",
+                ],
+                [
+                    "A breakfast cereal",
+                    "A type of fish",
+                    "A movie hero",
+                    "Something you find in a forest",
+                    "A type of jacket",
+                    "A famous river",
+                    "Something you bake",
+                    "A martial art",
+                    "A nut",
+                    "A word for 'happy'",
+                ],
+                [
+                    "A type of bread",
+                    "An Olympic sport",
+                    "A Disney character",
+                    "Something you find underground",
+                    "A type of flower",
+                    "A famous mountain",
+                    "Something you plug in",
+                    "A type of dinosaur",
+                    "A card or board game",
+                    "A word that means 'big'",
+                ],
+            ]
+
+            /* One pooled deck of prompts — each turn deals CARD_SIZE random ones. */
+            const ALL_PROMPTS = [...new Set(CARDS.flat())]
+
+            /* Friendly letter set (skip the very hard ones). */
+            const LETTERS = "ABCDEFGHILMNOPRSTW".split("")
+            const ROUNDS = 3,
+                TURN_SECONDS = 30,
+                POINTS = 10,
+                CARD_SIZE = 10
+
+            /* ---------- State ---------- */
+            let players = [] // {name, scores:[r0,r1,r2]}
+            let promptPool = [] // shuffled pool of prompts to draw from
+            let round = 0,
+                turnIndex = 0
+            let letter = "",
+                card = null,
+                promptPos = 0,
+                turnScore = 0
+            let timer = null,
+                timeLeft = TURN_SECONDS
+
+            /* ---------- Helpers ---------- */
+            const $ = (id) => document.getElementById(id)
+            const show = (id) => {
+                document
+                    .querySelectorAll(".screen")
+                    .forEach((s) => s.classList.remove("active"))
+                $(id).classList.add("active")
+            }
+            function shuffle(a) {
+                a = a.slice()
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1))
+                    ;[a[i], a[j]] = [a[j], a[i]]
+                }
+                return a
+            }
+            function drawCard() {
+                if (promptPool.length < CARD_SIZE) promptPool = shuffle(ALL_PROMPTS)
+                return promptPool.splice(0, CARD_SIZE)
+            }
+
+            /* ---------- Setup screen ---------- */
+            function addPlayerRow(name = "") {
+                const row = document.createElement("div")
+                row.className = "player-row"
+                row.innerHTML = `<input type="text" maxlength="14" placeholder="Player name" value="${name.replace(/"/g, "&quot;")}">
+                   <button class="iconbtn" title="Remove">✕</button>`
+                row.querySelector(".iconbtn").onclick = () => {
+                    if ($("playerList").children.length > 1) row.remove()
+                }
+                $("playerList").appendChild(row)
+            }
+            function readPlayers() {
+                return [...$("playerList").querySelectorAll("input")]
+                    .map((i) => i.value.trim())
+                    .filter(Boolean)
+            }
+            $("addPlayer").onclick = () => addPlayerRow()
+            $("startGame").onclick = () => {
+                const names = readPlayers()
+                if (names.length === 0) {
+                    alertFlash("Add at least one player!")
+                    return
+                }
+                players = names.map((n) => ({
+                    name: n,
+                    scores: Array(ROUNDS).fill(0),
+                }))
+                promptPool = shuffle(ALL_PROMPTS)
+                round = 0
+                turnIndex = 0
+                startSpin()
+            }
+            function alertFlash(msg) {
+                const b = $("startGame")
+                const old = b.textContent
+                b.textContent = msg
+                setTimeout(() => (b.textContent = old), 1200)
+            }
+
+            /* ---------- Spin screen ---------- */
+            function startSpin() {
+                $("spinRound").textContent = `Round ${round + 1} of ${ROUNDS}`
+                $("spinWho").textContent = players[turnIndex].name
+                $("letterDisc").textContent = "?"
+                $("letterDisc").classList.remove("spinning")
+                $("spinBtn").style.display = ""
+                $("spinBtn").disabled = false
+                $("beginBtn").style.display = "none"
+                letter = ""
+                show("spin")
+            }
+            $("spinBtn").onclick = () => {
+                $("spinBtn").disabled = true
+                const disc = $("letterDisc")
+                disc.classList.add("spinning")
+                let ticks = 0
+                const iv = setInterval(() => {
+                    disc.textContent =
+                        LETTERS[Math.floor(Math.random() * LETTERS.length)]
+                    if (++ticks > 16) {
+                        clearInterval(iv)
+                        disc.classList.remove("spinning")
+                        letter =
+                            LETTERS[Math.floor(Math.random() * LETTERS.length)]
+                        disc.textContent = letter
+                        $("spinBtn").style.display = "none"
+                        $("beginBtn").style.display = ""
+                    }
+                }, 70)
+            }
+            $("beginBtn").onclick = () => beginTurn()
+
+            /* ---------- Play screen ---------- */
+            function beginTurn() {
+                card = drawCard()
+                promptPos = 0
+                turnScore = 0
+                timeLeft = TURN_SECONDS
+                $("playLetter").textContent = letter
+                $("playWho").textContent = players[turnIndex].name
+                $("liveScore").textContent = "0"
+                renderPrompt()
+                updateTimerUI()
+                show("play")
+                clearInterval(timer)
+                timer = setInterval(tick, 1000)
+            }
+            function renderPrompt() {
+                if (promptPos >= card.length) {
+                    endTurn()
+                    return
+                }
+                $("promptCount").textContent =
+                    `Prompt ${promptPos + 1} of ${card.length}`
+                $("promptText").textContent = card[promptPos]
+            }
+            function tick() {
+                timeLeft--
+                updateTimerUI()
+                if (timeLeft <= 0) endTurn()
+            }
+            function updateTimerUI() {
+                $("timerText").textContent = timeLeft
+                const pct = (timeLeft / TURN_SECONDS) * 100
+                $("timerBar").firstElementChild.style.width = pct + "%"
+                const warn = timeLeft <= 10
+                $("timerText").classList.toggle("warn", warn)
+                $("timerBar").classList.toggle("warn", warn)
+            }
+            $("correctBtn").onclick = () => {
+                turnScore += POINTS
+                $("liveScore").textContent = turnScore
+                promptPos++
+                renderPrompt()
+            }
+            $("passBtn").onclick = () => {
+                promptPos++
+                renderPrompt()
+            }
+
+            /* ---------- Turn summary ---------- */
+            function endTurn() {
+                clearInterval(timer)
+                players[turnIndex].scores[round] += turnScore
+                const correct = turnScore / POINTS
+                $("sumWho").textContent = players[turnIndex].name
+                $("sumPoints").textContent = turnScore
+                $("sumDetail").textContent =
+                    `${correct} correct answer${correct === 1 ? "" : "s"} × ${POINTS} pts`
+                renderLiveBoard()
+                $("nextTurnBtn").textContent = isLastTurnOfGame()
+                    ? "See results →"
+                    : "Next player →"
+                show("summary")
+            }
+            function renderLiveBoard() {
+                const t = $("liveBoard")
+                let head =
+                    '<tr><th class="name" style="text-align:left">Player</th>'
+                for (let r = 0; r < ROUNDS; r++) head += `<th>R${r + 1}</th>`
+                head += "<th>Total</th></tr>"
+                let rows = ""
+                players.forEach((p) => {
+                    const total = p.scores.reduce((a, b) => a + b, 0)
+                    rows += `<tr><td class="name">${escapeHtml(p.name)}</td>`
+                    for (let r = 0; r < ROUNDS; r++)
+                        rows += `<td>${p.scores[r] || "·"}</td>`
+                    rows += `<td class="total">${total}</td></tr>`
+                })
+                t.innerHTML = head + rows
+            }
+            function isLastTurnOfGame() {
+                return round === ROUNDS - 1 && turnIndex === players.length - 1
+            }
+            $("nextTurnBtn").onclick = () => {
+                turnIndex++
+                if (turnIndex >= players.length) {
+                    turnIndex = 0
+                    round++
+                }
+                if (round >= ROUNDS) showResults()
+                else startSpin()
+            }
+
+            /* ---------- Results ---------- */
+            function showResults() {
+                const ranked = players
+                    .map((p) => ({
+                        name: p.name,
+                        total: p.scores.reduce((a, b) => a + b, 0),
+                    }))
+                    .sort((a, b) => b.total - a.total)
+                const top = ranked[0].total,
+                    bottom = ranked[ranked.length - 1].total
+                const medals = ["🥇", "🥈", "🥉"]
+                let html = ""
+                ranked.forEach((p, i) => {
+                    let tag = ""
+                    if (p.total === top)
+                        tag =
+                            '<span class="cardtag">🏆 The $2,000 Wake Up and Win card!</span>'
+                    else if (p.total === bottom && ranked.length > 1)
+                        tag =
+                            '<span class="cardtag">🥿 The Slippers card</span>'
+                    html += `<div class="result-row">
+        <div class="medal">${medals[i] || i + 1 + "."}</div>
+        <div class="rname">${escapeHtml(p.name)}${tag}</div>
+        <div class="rscore">${p.total}</div>
+      </div>`
+                })
+                if (ranked.length > 1 && ranked[0].total === ranked[1].total) {
+                    html += `<p class="hint" style="margin-top:12px">It's a tie at the top! In the real game, tied players take one extra turn each to decide the winner.</p>`
+                }
+                $("resultsList").innerHTML = html
+                show("results")
+            }
+            $("playAgainBtn").onclick = () => {
+                players.forEach((p) => (p.scores = Array(ROUNDS).fill(0)))
+                promptPool = shuffle(ALL_PROMPTS)
+                round = 0
+                turnIndex = 0
+                startSpin()
+            }
+            $("newPlayersBtn").onclick = () => show("setup")
+
+            /* ---------- util ---------- */
+            function escapeHtml(s) {
+                return s.replace(
+                    /[&<>"']/g,
+                    (c) =>
+                        ({
+                            "&": "&amp;",
+                            "<": "&lt;",
+                            ">": "&gt;",
+                            '"': "&quot;",
+                            "'": "&#39;",
+                        })[c],
+                )
+            }
+
+            /* ---------- init ---------- */
+            addPlayerRow("Player 1")
+            addPlayerRow("Player 2")
+        </script>
+    </body>
+</html>
